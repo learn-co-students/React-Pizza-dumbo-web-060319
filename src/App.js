@@ -4,99 +4,77 @@ import PizzaForm from './components/PizzaForm'
 import PizzaList from './containers/PizzaList'
 class App extends Component {
 
-  // What parts of state should live here?
-  // Pizzas --> Sends the data down to the pizza list and render
   state = {
-    pizzas: [],
+    allPizzas: [],
     selectedPizza: {}
   }
 
-
-  // We want at least one place to render
-  // So we use this to make sure to wait for render
-  componentDidMount() {
-    fetch("http://localhost:3001/pizzas")
-    .then(res => res.json())                // Takes a response object and converts it to JSON; returns a Promise
-    .then(data => {
-      this.setState({
-        pizzas: data
-      })
-    })
+  componentDidMount(){
+    fetch("http://localhost:3000/pizzas")
+    .then(resp => resp.json())
+    .then(data => this.setState({
+      allPizzas: data
+    }))
   }
 
-
-  // When I click on the edit button, I need to change the selected Pizza
-  handleClick = (pizzaObj) => {
+  selectPizza = (pizza) => {
     this.setState({
-      selectedPizza: pizzaObj
+      selectedPizza: pizza
     })
   }
 
-  handleChange = (e) => {
-
-    // const newPizza = {
-    //   ...this.state.selectedPizza,
-    //   [e.target.name]: e.target.value
-    // }
-    // this.setState({
-    //   selectedPizza: newPizza
-    // })
-
+  editToppingAndSize = (e) => {
     this.setState({
       selectedPizza: {
-        ...this.state.selectedPizza,
+      ...this.state.selectedPizza,
         [e.target.name]: e.target.value
       }
     })
   }
 
-  handleRadioButtonChange = (e) => {
+  editVegetarianStatus = (e) => {
     console.log(e.target.value)
-    // If it is vegetarian
-    // State should be true
-    // If it is not vegetarian
-    // State should be false
-    if(e.target.value === "Vegetarian") {
+    if (e.target.value === "Vegetarian") {
       this.setState({
         selectedPizza: {
           ...this.state.selectedPizza,
-          vegetarian: true
+            vegetarian: true
         }
       })
-    } else {
+    } 
+    else {
       this.setState({
         selectedPizza: {
           ...this.state.selectedPizza,
-          vegetarian: false
+            vegetarian: false
         }
       })
     }
   }
 
-  handleSubmit = (selectedPizza) => {
-    // PATCH request because I need to persist
-    fetch(`http://localhost:3001/pizzas/${selectedPizza.id}`, {
+  patchThatPie = (selectedPizza) => {
+
+    fetch(`http://localhost:3000/pizzas/${selectedPizza.id}`, {
       method: "PATCH",
       headers: {
-        "Content-Type": "application/json"
-      }, 
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(selectedPizza)
     })
-    // Grab the selectedPizza and update the PizzaList
-    const newPizzas = this.state.pizzas.map(pizza => {
-      if(pizza.id === selectedPizza.id) {
-        //I want to change that pizza
+    // if our pizza id matches the id of the selected pizza, change the state
+    const newPizzas = this.state.allPizzas.map(pizza => {
+      if (pizza.id === selectedPizza.id) {
         return selectedPizza
-      } else {
-        // return back the pizza that was there
+      } 
+      else {
         return pizza
       }
     })
-
     this.setState({
-      pizzas: newPizzas
+      allPizzas: newPizzas
     })
-    // console.log('This is after we update our pizza: ', newPizzas)
+
+    
   }
 
 
@@ -105,8 +83,12 @@ class App extends Component {
     return (
       <Fragment>
         <Header/>
-        <PizzaForm handleSubmit={this.handleSubmit} handleRadioButtonChange={this.handleRadioButtonChange} handleChange={this.handleChange} pizza={this.state.selectedPizza} />
-        <PizzaList handleClick={this.handleClick} pizzas={this.state.pizzas} />
+        <PizzaForm pizza={this.state.selectedPizza} 
+          changeHandler={this.editToppingAndSize} 
+          handleRadioButton={this.editVegetarianStatus}
+          handleSubmit={this.patchThatPie}
+        />
+        <PizzaList pizzas={this.state.allPizzas} clickHandler={this.selectPizza}/>
       </Fragment>
     );
   }

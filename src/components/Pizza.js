@@ -5,8 +5,8 @@ const Pizza = (props) => {
     <tr>
       <td>{props.pizza.topping}</td>
       <td>{props.pizza.size}</td>
-      <td>{props.pizza.vegetarian ? "Yes" : "No"}</td>
-      <td><button onClick={() => props.handleClick(props.pizza)} type="button" className="btn btn-primary">Edit Pizza</button></td>
+      <td>{props.pizza.vegetarian ? "Yah" : "Nah"}</td>
+      <td><button type="button" className="btn btn-primary" onClick={() => props.clickHandler(props.pizza)}>Edit Pizza</button></td>
     </tr>
   )
 }

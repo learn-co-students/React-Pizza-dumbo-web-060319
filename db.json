@@ -2,9 +2,9 @@
   "pizzas": [
     {
       "id": 1,
-      "topping": "dill",
-      "size": "Large",
-      "vegetarian": false
+      "topping": "CHEEMZE",
+      "size": "Medium",
+      "vegetarian": true
     },
     {
       "id": 2,
